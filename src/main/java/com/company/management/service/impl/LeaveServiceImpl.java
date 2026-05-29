@@ -50,4 +50,10 @@ public class LeaveServiceImpl implements LeaveService {
         List<LeaveRequest> list = leaveMapper.list(employee.getId());
         return Result.success(list);
     }
+
+    @Override
+    public Result<LeaveRequest> leaveDetail(Integer id) {
+        LeaveRequest leaveRequest = leaveMapper.getById(id);
+        return Result.success(leaveRequest);
+    }
 }

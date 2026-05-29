@@ -26,4 +26,13 @@ public interface LeaveMapper {
      */
     @Select("select * from leave_request where employee_id = #{employeeid} order by apply_time desc")
     List<LeaveRequest> list(Integer employeeid);
+
+    /**
+     * 获取请假申请
+     *
+     * @param id 请假申请id
+     * @return 请假申请
+     */
+    @Select("select * from leave_request where id = #{id}")
+    LeaveRequest getById(Integer id);
 }
