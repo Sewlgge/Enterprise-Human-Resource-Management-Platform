@@ -1,0 +1,30 @@
+server:
+  port: 8084
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/emp_sys?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+
+    data:
+      redis:
+        host: localhost
+        port: 6379
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.company.management.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+# 阿里云OSS配置
+aliyun:
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    access-key-id: LTAI5tNZ2pg4eKaE9Rim5MvY
+    access-key-secret: Bd60WKVqW44wx6KaGbE2sEkoJSVkeu
+    bucket-name: management33
+    url-prefix: https://management33.oss-cn-beijing.aliyuncs.com/
+

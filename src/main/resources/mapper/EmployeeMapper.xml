@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.management.mapper.EmployeeMapper">
+
+    <!--动态sql-->
+
+    <select id="list" resultType="com.company.management.entity.Employee">
+        select * from employee
+        <where>
+            <if test="dto.realName != null and dto.realName != ''">
+                and name like concat('%',#{dto.realName},'%')
+            </if>
+            <if test="dto.phone != null and dto.phone != ''">
+                and phone = #{dto.phone}
+            </if>
+            <if test="dto.deptId != null">
+                and dept_id = #{dto.deptId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="add">
+        insert into employee (real_name, gender, phone, email, dept_id, position_id, avatar, age, user_id, address, hire_date)
+        values (#{dto.realName}, #{dto.gender}, #{dto.phone}, #{dto.email}, #{dto.deptId}, #{dto.positionId}, #{dto.avatar}, #{dto.age}, #{dto.userId}, #{dto.address}, #{dto.hireDate})
+    </insert>
+
+    <update id="update">
+        update employee
+        <set>
+            <if test="dto.realName != null and dto.realName != ''">
+                real_name = #{dto.realName},
+            </if>
+            <if test="dto.gender != null">
+                gender = #{dto.gender},
+            </if>
+            <if test="dto.phone != null and dto.phone != ''">
+                phone = #{dto.phone},
+            </if>
+            <if test="dto.email != null and dto.email != ''">
+                email = #{dto.email},
+            </if>
+            <if test="dto.deptId != null">
+                dept_id = #{dto.deptId},
+            </if>
+            <if test="dto.positionId != null">
+                position_id = #{dto.positionId},
+            </if>
+            <if test="dto.avatar != null and dto.avatar != ''">
+                avatar = #{dto.avatar},
+            </if>
+            <if test="dto.age != null">
+                age = #{dto.age},
+            </if>
+            <if test="dto.userId != null">
+                user_id = #{dto.userId},
+            </if>
+            <if test="dto.address != null and dto.address != ''">
+                address = #{dto.address},
+            </if>
+            <if test="dto.hireDate != null">
+                hire_date = #{dto.hireDate},
+            </if>
+        </set>
+        where id = #{dto.id} and is_deleted = 0
+    </update>
+
+</mapper>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.management.mapper.AttendanceMapper">
+
+    <select id="getTodayByEmployeeId" resultType="java.lang.Integer">
+        select id from attendance
+        where employee_id = #{employeeId}
+          and attendance_date = #{today}
+        limit 1
+    </select>
+
+    <update id="signIn">
+        update attendance
+        set sign_in_time = #{signInTime},
+            status = #{status}
+        where employee_id = #{employeeId}
+          and attendance_date = curdate()
+          and sign_in_time is null
+    </update>
+
+    <update id="signOut">
+        update attendance
+        set sign_out_time = #{signOutTime},
+            status = #{status}
+        where employee_id = #{employeeId}
+          and attendance_date = curdate()
+          and sign_out_time is null
+    </update>
+
+    <insert id="batchInsert">
+        insert into attendance (employee_id, attendance_date)
+        values
+        <foreach collection="employeeIds" item="empId" separator=",">
+            (#{empId}, #{today})
+        </foreach>
+    </insert>
+
+    <select id="getAllActiveEmployeeIds" resultType="java.lang.Integer">
+        select id from employee where is_deleted = 0
+    </select>
+
+    <select id="getTodayRecordedEmployeeIds" resultType="java.lang.Integer">
+        select employee_id from attendance where attendance_date = #{today}
+    </select>
+
+    <select id="getByEmployeeId"
+            resultType="com.company.management.entity.Attendance">
+        select *
+        from attendance
+        <where>
+            employee_id = #{employeeId}
+            <if test="month != null">
+                and YEAR(attendance_date) = YEAR(NOW())
+                and MONTH(attendance_date) = #{month}
+            </if>
+        </where>
+        order by attendance_date desc
+
+    </select>
+
+    <select id="page" resultType="com.company.management.vo.AttendanceVO">
+        select * from attendance
+        <where>
+            <if test="dto.employeeId != null">
+                and employee_id = #{dto.employeeId}
+            </if>
+            <if test="dto.status != null">
+                and status = #{dto.status}
+            </if>
+            <if test="dto.startTime != null">
+                and create_time >= #{dto.startTime}
+            </if>
+            <if test="dto.endTime != null">
+                and create_time &lt; #{dto.endTime}
+            </if>
+        </where>
+    </select>
+    <!-- 更新前一天的打卡状态：sign_in_time为空 → 缺卡(3) -->
+    <update id="updatePreviousDayStatus">
+        update attendance
+        set status = 3
+        where attendance_date = #{yesterday}
+          and sign_in_time is null
+    </update>
+
+    <update id="update">
+        update attendance
+        <set>
+            <if test="signInTime != null">
+                sign_in_time = #{signInTime},
+            </if>
+            <if test="signOutTime != null">
+                sign_out_time = #{signOutTime},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where employee_id = #{employeeId}
+    </update>
+
+</mapper>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.management.mapper.DeptMapper">
+    <!--动态sql-->
+
+    <select id="list" resultType="com.company.management.entity.Dept">
+        select * from dept
+        <where>
+            <if test="dto.name != null and dto.name != ''">
+                and name like concat('%',#{dto.name},'%')
+            </if>
+            and is_deleted = 0
+        </where>
+        order by create_time desc, update_time desc
+    </select>
+</mapper>
