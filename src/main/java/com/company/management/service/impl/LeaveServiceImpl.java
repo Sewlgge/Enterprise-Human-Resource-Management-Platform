@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -39,5 +40,14 @@ public class LeaveServiceImpl implements LeaveService {
             return Result.error("申请失败");
         }
         return Result.success("申请成功");
+    }
+
+    @Override
+    public Result<List<LeaveRequest>> myLeave() {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        Employee employee = employeeMapper.getByUserId(userId);
+        List<LeaveRequest> list = leaveMapper.list(employee.getId());
+        return Result.success(list);
     }
 }
