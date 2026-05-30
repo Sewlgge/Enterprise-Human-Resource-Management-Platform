@@ -3,6 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.company.management.mapper.LeaveMapper">
+
     <!--动态sql-->
 
     <select id="page" resultType="com.company.management.entity.LeaveRequest">
@@ -25,4 +26,19 @@
             </if>
         </where>
     </select>
+    <update id="update">
+        update leave_request
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="remark != null">
+                approve_remark = #{remark},
+            </if>
+                approver_id = #{employeeId},
+                approve_time = NOW(),
+                update_time = NOW()
+        </set>
+        where id = #{id}
+    </update>
 </mapper>

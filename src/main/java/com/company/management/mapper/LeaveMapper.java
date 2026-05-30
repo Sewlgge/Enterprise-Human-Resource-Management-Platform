@@ -23,7 +23,7 @@ public interface LeaveMapper {
 
     /**
      * 获取请假申请列表
-     * @param id 员工id
+     * @param employeeid 员工id
      * @return 请假申请列表
      */
     @Select("select * from leave_request where employee_id = #{employeeid} order by apply_time desc")
@@ -45,4 +45,15 @@ public interface LeaveMapper {
      * @return 请假申请列表
      */
     List<LeaveRequest> page(@Param("dto") LeavePageDTO leavePageDTO);
+
+    /**
+     * 审批请假申请
+     *
+     * @param id         请假申请id
+     * @param status     请假申请状态
+     * @param remark     请假申请备注
+     * @param employeeId
+     * @return 是否更新成功
+     */
+    int update(@Param("id") Integer id, @Param("status") Integer status, @Param("remark") String remark, @Param("employeeId") Integer employeeId);
 }

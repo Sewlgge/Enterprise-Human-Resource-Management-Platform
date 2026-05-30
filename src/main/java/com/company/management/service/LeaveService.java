@@ -35,4 +35,13 @@ public interface LeaveService {
      * @return 请假分页结果
      */
     Result<PageBean<LeaveRequest>> leavePage(LeavePageDTO leavePageDTO);
+
+    /**
+     * 审批请假
+     * @param id 请假id
+     * @param status 审批状态
+     * @param remark 审批备注
+     * @return 审批结果
+     */
+    Result<String> approver(Integer id, Integer status, String remark);
 }

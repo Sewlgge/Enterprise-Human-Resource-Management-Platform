@@ -7,6 +7,7 @@ import com.company.management.entity.PageBean;
 import com.company.management.entity.Result;
 import com.company.management.service.LeaveService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -46,5 +47,14 @@ public class LeaveController {
     public Result<PageBean<LeaveRequest>> leavePage(LeavePageDTO leavePageDTO) {
         return leaveService.leavePage(leavePageDTO);
     }
+
+    @PutMapping("/approver/{id}")
+    @Operation(summary = "审批考勤")
+    public Result<String> approver(@PathVariable("id") Integer id,
+                                   @Schema(description = "审批状态") @RequestParam(name = "status") Integer status,
+                                   @Schema(description = "审批备注") @RequestParam(name = "remark",required = false) String remark) {
+        return leaveService.approver(id, status, remark);
+    }
+
 
 }

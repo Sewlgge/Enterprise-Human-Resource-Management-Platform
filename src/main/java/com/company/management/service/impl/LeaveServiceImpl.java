@@ -6,6 +6,7 @@ import com.company.management.dto.LeavePageDTO;
 import com.company.management.entity.*;
 import com.company.management.mapper.EmployeeMapper;
 import com.company.management.mapper.LeaveMapper;
+import com.company.management.mapper.UserMapper;
 import com.company.management.service.LeaveService;
 import com.company.management.utils.ThreadLocalUtil;
 import com.github.pagehelper.Page;
@@ -27,6 +28,8 @@ public class LeaveServiceImpl implements LeaveService {
     private LeaveMapper leaveMapper;
     @Autowired
     private EmployeeMapper employeeMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     @Transactional
@@ -79,5 +82,23 @@ public class LeaveServiceImpl implements LeaveService {
         pageBean.setTotal(p.getTotal());
         pageBean.setItems(p.getResult());
         return Result.success(pageBean);
+    }
+
+    @Override
+    public Result<String> approver(Integer id, Integer status, String remark) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        User user = userMapper.findByUserId(userId);
+        if (user.getRole() != 0) {
+            log.info("权限不足");
+            return Result.error("权限不足");
+        }
+        Employee employee = employeeMapper.getByUserId(userId);
+        int result = leaveMapper.update(id, status, remark, employee.getId());
+        if (result == 0) {
+            log.info("操作失败");
+            return Result.error("操作失败");
+        }
+        return Result.success("操作成功");
     }
 }
