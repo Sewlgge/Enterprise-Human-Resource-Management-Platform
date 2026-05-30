@@ -16,4 +16,9 @@ public interface NoticeService {
      * 公告详情
      */
     Result<Notice> detail(Integer id);
+
+    /**
+     * 发布公告
+     */
+    Result publish(Notice notice);
 }

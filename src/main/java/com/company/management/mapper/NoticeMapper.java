@@ -21,4 +21,9 @@ public interface NoticeMapper {
      */
     @Select("select * from notice where id = #{id}")
     Notice getById(Integer id);
+
+    /**
+     * 新增公告
+     */
+    int add(@Param("dto") Notice notice);
 }

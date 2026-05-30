@@ -24,4 +24,10 @@
         </where>
         order by create_time desc
     </select>
+
+    <insert id="add">
+        insert into
+        notice(title,content,publisher_id,status)
+        values(#{dto.title},#{dto.content},#{dto.publisherId},#{dto.status})
+    </insert>
 </mapper>
