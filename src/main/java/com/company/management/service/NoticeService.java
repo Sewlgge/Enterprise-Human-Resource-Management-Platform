@@ -21,4 +21,9 @@ public interface NoticeService {
      * 发布公告
      */
     Result publish(Notice notice);
+
+    /**
+     * 删除公告
+     */
+    Result delete(Integer id);
 }

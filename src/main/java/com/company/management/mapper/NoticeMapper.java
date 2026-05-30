@@ -2,6 +2,7 @@ package com.company.management.mapper;
 
 import com.company.management.dto.NoticePageDTO;
 import com.company.management.entity.Notice;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -26,4 +27,10 @@ public interface NoticeMapper {
      * 新增公告
      */
     int add(@Param("dto") Notice notice);
+
+    /**
+     * 删除公告
+     */
+    @Delete("delete from notice where id = #{id}")
+    int delete(Integer id);
 }

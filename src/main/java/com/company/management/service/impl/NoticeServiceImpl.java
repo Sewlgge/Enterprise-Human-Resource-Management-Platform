@@ -71,4 +71,20 @@ public class NoticeServiceImpl implements NoticeService {
         }
         return Result.success("发布成功");
     }
+
+    @Override
+    public Result delete(Integer id) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        User user = userMapper.findByUserId(userId);
+        if (user.getRole() != 0) {
+            log.info("权限不足");
+            return Result.error("权限不足");
+        }
+        int rows = noticeMapper.delete(id);
+        if (rows != 1) {
+            return Result.error("删除失败");
+        }
+        return Result.success("删除成功");
+    }
 }

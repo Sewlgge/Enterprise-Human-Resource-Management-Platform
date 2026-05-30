@@ -6,6 +6,7 @@ import com.company.management.entity.PageBean;
 import com.company.management.entity.Result;
 import com.company.management.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +37,12 @@ public class NoticeController {
     @Operation(summary = "发布公告")
     public Result publish(@RequestBody Notice notice) {
         return noticeService.publish(notice);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "删除公告")
+    public Result delete(@Schema(description = "公告id") @PathVariable("id") Integer id) {
+        return noticeService.delete(id);
     }
 
 }
