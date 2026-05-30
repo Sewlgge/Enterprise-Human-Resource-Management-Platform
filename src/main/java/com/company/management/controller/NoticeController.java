@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +27,12 @@ public class NoticeController {
     @Operation(summary = "分页查询公告")
     public Result<PageBean<Notice>> page(NoticePageDTO noticePageDTO) {
         return noticeService.page(noticePageDTO);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "公告详情")
+    public Result<Notice> detail(@PathVariable("id") Integer id) {
+        return noticeService.detail(id);
     }
 
 }

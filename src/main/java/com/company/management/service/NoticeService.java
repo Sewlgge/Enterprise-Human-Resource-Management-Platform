@@ -11,4 +11,9 @@ public interface NoticeService {
      * 分页查询公告
      */
     Result<PageBean<Notice>> page(NoticePageDTO noticePageDTO);
+
+    /**
+     * 公告详情
+     */
+    Result<Notice> detail(Integer id);
 }

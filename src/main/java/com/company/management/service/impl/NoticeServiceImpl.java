@@ -43,4 +43,10 @@ public class NoticeServiceImpl implements NoticeService {
         noticePageBean.setItems(p.getResult());
         return Result.success(noticePageBean);
     }
+
+    @Override
+    public Result<Notice> detail(Integer id) {
+        Notice notice = noticeMapper.getById(id);
+        return Result.success(notice);
+    }
 }
