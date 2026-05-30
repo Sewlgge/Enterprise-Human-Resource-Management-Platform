@@ -15,4 +15,99 @@
         ) yesterdayAttendance,
         (SELECT COUNT(*) FROM leave_request WHERE status = 0) pendingLeave
     </select>
+
+    <select id="countMonthAttendanceStatus" resultType="com.company.management.vo.AttendanceStatusSummaryVO">
+        SELECT COUNT(*)                                                      AS total,
+               IFNULL(SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END), 0)        AS normal,
+               IFNULL(SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END), 0)        AS late,
+               IFNULL(SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END), 0)        AS earlyLeave,
+               IFNULL(SUM(CASE WHEN status = 3 THEN 1 ELSE 0 END), 0)        AS missing,
+               IFNULL(SUM(CASE WHEN status = 4 THEN 1 ELSE 0 END), 0)        AS leaveCount
+        FROM attendance
+        WHERE YEAR(attendance_date) = YEAR(CURDATE())
+          AND MONTH(attendance_date) = MONTH(CURDATE())
+    </select>
+
+    <select id="listMonthDailyAttendanceStats" resultType="com.company.management.vo.DailyAttendanceStatVO">
+        SELECT attendance_date                                              AS date,
+               COUNT(*)                                                     AS total,
+               IFNULL(SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END), 0)       AS normal,
+               IFNULL(SUM(CASE WHEN status != 0 THEN 1 ELSE 0 END), 0)      AS abnormal
+        FROM attendance
+        WHERE YEAR(attendance_date) = YEAR(CURDATE())
+          AND MONTH(attendance_date) = MONTH(CURDATE())
+        GROUP BY attendance_date
+        ORDER BY attendance_date
+    </select>
+
+    <select id="listMonthAttendanceRecords" resultType="com.company.management.vo.AttendanceRecordVO">
+        SELECT a.id,
+               a.employee_id     AS employeeId,
+               e.real_name       AS employeeName,
+               a.attendance_date AS attendanceDate,
+               a.sign_in_time    AS signInTime,
+               a.sign_out_time   AS signOutTime,
+               a.status,
+               a.remark
+        FROM attendance a
+                 LEFT JOIN employee e ON e.id = a.employee_id AND e.is_deleted = 0
+        WHERE YEAR(a.attendance_date) = YEAR(CURDATE())
+          AND MONTH(a.attendance_date) = MONTH(CURDATE())
+        ORDER BY a.attendance_date DESC, a.employee_id
+    </select>
+
+    <select id="listDeptEmployeeCount" resultType="com.company.management.vo.DeptEmployeeCountVO">
+        SELECT d.id   AS deptId,
+               d.name AS deptName,
+               COUNT(e.id) AS employeeCount
+        FROM dept d
+                 LEFT JOIN employee e ON e.dept_id = d.id AND e.is_deleted = 0
+        WHERE d.is_deleted = 0
+        GROUP BY d.id, d.name
+        ORDER BY employeeCount DESC, d.id
+    </select>
+
+    <select id="countMonthLeaveStatus" resultType="com.company.management.vo.LeaveStatusSummaryVO">
+        SELECT COUNT(*)                                               AS total,
+               IFNULL(SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END), 0) AS pending,
+               IFNULL(SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END), 0) AS approved,
+               IFNULL(SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END), 0) AS rejected,
+               IFNULL(SUM(days), 0)                                   AS totalDays
+        FROM leave_request
+        WHERE apply_time &gt;= DATE_FORMAT(CURDATE(), '%Y-%m-01')
+          AND apply_time &lt; DATE_ADD(DATE_FORMAT(CURDATE(), '%Y-%m-01'), INTERVAL 1 MONTH)
+    </select>
+
+    <select id="listMonthLeaveByType" resultType="com.company.management.vo.LeaveTypeStatVO">
+        SELECT type,
+               COUNT(*) AS count
+        FROM leave_request
+        WHERE apply_time &gt;= DATE_FORMAT(CURDATE(), '%Y-%m-01')
+          AND apply_time &lt; DATE_ADD(DATE_FORMAT(CURDATE(), '%Y-%m-01'), INTERVAL 1 MONTH)
+        GROUP BY type
+        ORDER BY count DESC
+    </select>
+
+    <select id="listMonthLeaveRecords" resultType="com.company.management.entity.LeaveRequest">
+        SELECT lr.id,
+               lr.employee_id    AS employeeId,
+               lr.start_date     AS startDate,
+               lr.end_date       AS endDate,
+               lr.days,
+               lr.type,
+               lr.reason,
+               lr.status,
+               lr.approver_id    AS approverId,
+               lr.approve_remark AS approveRemark,
+               lr.apply_time     AS applyTime,
+               lr.approve_time   AS approveTime,
+               lr.create_time    AS createTime,
+               lr.update_time    AS updateTime,
+               e.real_name       AS employeeName
+        FROM leave_request lr
+                 LEFT JOIN employee e ON e.id = lr.employee_id AND e.is_deleted = 0
+        WHERE lr.apply_time &gt;= DATE_FORMAT(CURDATE(), '%Y-%m-01')
+          AND lr.apply_time &lt; DATE_ADD(DATE_FORMAT(CURDATE(), '%Y-%m-01'), INTERVAL 1 MONTH)
+        ORDER BY lr.apply_time DESC
+    </select>
 </mapper>
