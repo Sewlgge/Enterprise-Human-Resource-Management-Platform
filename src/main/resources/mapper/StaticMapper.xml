@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.management.mapper.StaticMapper">
+
+    <select id="staticborad" resultType="com.company.management.entity.Static">
+        SELECT
+        (SELECT COUNT(*) FROM employee WHERE is_deleted = 0) employeeCount,
+        (SELECT COUNT(*) FROM dept WHERE is_deleted = 0) deptCount,
+        (SELECT COUNT(*)
+        FROM attendance
+        WHERE create_time &gt;= DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+        AND create_time &lt; CURDATE() AND status = 0
+        ) yesterdayAttendance,
+        (SELECT COUNT(*) FROM leave_request WHERE status = 0) pendingLeave
+    </select>
+</mapper>
