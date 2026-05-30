@@ -1,7 +1,9 @@
 package com.company.management.controller;
 
 import com.company.management.dto.LeaveDTO;
+import com.company.management.dto.LeavePageDTO;
 import com.company.management.entity.LeaveRequest;
+import com.company.management.entity.PageBean;
 import com.company.management.entity.Result;
 import com.company.management.service.LeaveService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,5 +41,10 @@ public class LeaveController {
         return leaveService.leaveDetail(id);
     }
 
+    @GetMapping("/page")
+    @Operation(summary = "分页查询请假记录")
+    public Result<PageBean<LeaveRequest>> leavePage(LeavePageDTO leavePageDTO) {
+        return leaveService.leavePage(leavePageDTO);
+    }
 
 }

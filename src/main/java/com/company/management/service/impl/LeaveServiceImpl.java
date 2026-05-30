@@ -1,22 +1,28 @@
 package com.company.management.service.impl;
 
+import com.company.management.dto.EmployeePageDTO;
 import com.company.management.dto.LeaveDTO;
-import com.company.management.entity.Employee;
-import com.company.management.entity.LeaveRequest;
-import com.company.management.entity.Result;
+import com.company.management.dto.LeavePageDTO;
+import com.company.management.entity.*;
 import com.company.management.mapper.EmployeeMapper;
 import com.company.management.mapper.LeaveMapper;
 import com.company.management.service.LeaveService;
 import com.company.management.utils.ThreadLocalUtil;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class LeaveServiceImpl implements LeaveService {
+    private static final Logger log = LoggerFactory.getLogger(LeaveServiceImpl.class);
     @Autowired
     private LeaveMapper leaveMapper;
     @Autowired
@@ -55,5 +61,23 @@ public class LeaveServiceImpl implements LeaveService {
     public Result<LeaveRequest> leaveDetail(Integer id) {
         LeaveRequest leaveRequest = leaveMapper.getById(id);
         return Result.success(leaveRequest);
+    }
+
+    @Override
+    public Result<PageBean<LeaveRequest>> leavePage(LeavePageDTO leavePageDTO) {
+        PageBean<LeaveRequest> pageBean = new PageBean<>();
+        PageHelper.startPage(leavePageDTO.getPageNum(), leavePageDTO.getPageSize());
+        List<LeaveRequest> leaveList = leaveMapper.page(leavePageDTO);
+        log.info("请假列表：{}", leaveList);
+        Map<Integer, String> employeeMap = employeeMapper.list(new EmployeePageDTO())
+                .stream().collect(Collectors.toMap(Employee::getId, Employee::getRealName));
+        leaveList.forEach(leaveRequest -> leaveRequest.setEmployeeName(employeeMap.get(leaveRequest.getEmployeeId())));
+        log.info("员工列表：{}", employeeMap);
+        leaveList.forEach(leaveRequest -> leaveRequest.setApproverName(employeeMap.get(leaveRequest.getApproverId())));
+        Page<LeaveRequest> p = (Page<LeaveRequest>) leaveList;
+        //把数据填充到PageBean对象中
+        pageBean.setTotal(p.getTotal());
+        pageBean.setItems(p.getResult());
+        return Result.success(pageBean);
     }
 }

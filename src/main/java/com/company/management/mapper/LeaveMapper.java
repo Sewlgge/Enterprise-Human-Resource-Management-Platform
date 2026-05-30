@@ -1,8 +1,10 @@
 package com.company.management.mapper;
 
+import com.company.management.dto.LeavePageDTO;
 import com.company.management.entity.LeaveRequest;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -35,4 +37,12 @@ public interface LeaveMapper {
      */
     @Select("select * from leave_request where id = #{id}")
     LeaveRequest getById(Integer id);
+
+    /**
+     * 获取请假申请列表
+     *
+     * @param leavePageDTO 请假申请列表参数
+     * @return 请假申请列表
+     */
+    List<LeaveRequest> page(@Param("dto") LeavePageDTO leavePageDTO);
 }

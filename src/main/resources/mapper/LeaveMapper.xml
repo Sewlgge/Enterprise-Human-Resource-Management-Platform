@@ -5,4 +5,24 @@
 <mapper namespace="com.company.management.mapper.LeaveMapper">
     <!--动态sql-->
 
+    <select id="page" resultType="com.company.management.entity.LeaveRequest">
+        select * from leave_request
+        <where>
+            <if test="dto.employeeId != null">
+                and employee_id = #{dto.employeeId}
+            </if>
+            <if test="dto.status != null">
+                and status = #{dto.status}
+            </if>
+            <if test="dto.startTime != null">
+                and apply_time >= #{dto.startTime}
+            </if>
+            <if test="dto.endTime != null">
+                and apply_time &lt; #{dto.endTime}
+            </if>
+            <if test="dto.approverId != null">
+                and approver_id = #{dto.approverId}
+            </if>
+        </where>
+    </select>
 </mapper>

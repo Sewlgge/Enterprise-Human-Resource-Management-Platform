@@ -60,7 +60,7 @@ public class LeaveRequest implements Serializable {
     * 审批人ID
     */
     @Schema(description = "审批人ID")
-    private Long approverId;
+    private Integer approverId;
     /**
     * 审批备注
     */
@@ -90,5 +90,17 @@ public class LeaveRequest implements Serializable {
     @Schema(description = "更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
+
+    /**
+     * 请假人姓名
+     */
+    @Schema(description = "请假人姓名",accessMode = Schema.AccessMode.READ_ONLY)
+    private String employeeName;
+
+    /**
+     * 审核人姓名
+     */
+    @Schema(description = "审核人姓名",accessMode = Schema.AccessMode.READ_ONLY)
+    private String approverName;
 
 }
