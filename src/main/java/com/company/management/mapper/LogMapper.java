@@ -13,4 +13,6 @@ public interface LogMapper {
      * 查询所有日志
      */
     List<Log> list(@Param("dto") LogPageDTO logPageDTO);
+
+    void insert(@Param("log") Log log);
 }

@@ -1,5 +1,6 @@
 package com.company.management.controller;
 
+import com.company.management.annotation.OperateLog;
 import com.company.management.dto.EmployeeAddDTO;
 import com.company.management.dto.EmployeePageDTO;
 import com.company.management.dto.EmployeeUpdateDTO;
@@ -24,36 +25,42 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @RequestMapping("/page")
+    @OperateLog("员工分页查询")
     @Operation(summary = "员工分页查询")
     public Result<PageBean<Employee>> page(EmployeePageDTO employeePageDTO) {
         return employeeService.page(employeePageDTO);
     }
 
     @PostMapping("/add")
+    @OperateLog("员工添加")
     @Operation(summary = "员工添加")
     public Result add(@Validated @RequestBody EmployeeAddDTO employeeAddDTO) {
         return employeeService.add(employeeAddDTO);
     }
 
     @GetMapping("get/{id}")
+    @OperateLog("员工详情")
     @Operation(summary = "员工详情")
     public Result<Employee> get(@PathVariable("id") Integer id) {
         return employeeService.get(id);
     }
 
     @PutMapping("/update")
+    @OperateLog("员工更新")
     @Operation(summary = "员工更新")
     public Result update(@Validated @RequestBody EmployeeUpdateDTO employeeUpdateDTO) {
         return employeeService.update(employeeUpdateDTO);
     }
 
     @DeleteMapping("/delete/{id}")
+    @OperateLog("员工删除")
     @Operation(summary = "员工删除")
     public Result delete(@PathVariable("id") Integer id) {
         return employeeService.delete(id);
     }
 
     @PostMapping("/upload/avatar")
+    @OperateLog(value = "上传员工头像", recordParams = false)
     @Operation(summary = "上传员工头像")
     public Result<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
         return employeeService.uploadAvatar(file);

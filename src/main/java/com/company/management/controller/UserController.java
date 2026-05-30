@@ -1,5 +1,6 @@
 package com.company.management.controller;
 
+import com.company.management.annotation.OperateLog;
 import com.company.management.entity.Result;
 import com.company.management.service.UserService;
 
@@ -23,6 +24,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
+    @OperateLog("用户注册")
     @Operation(summary = "用户注册")
     public Result register(@Parameter(description = "用户名") @RequestParam("username")String username,
                            @Parameter(description = "密码") @RequestParam("password")String password) {
@@ -30,6 +32,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
+    @OperateLog("用户登录")
     @Operation(summary = "用户登录")
     public Result login(@Parameter(description = "用户名") @RequestParam("username")String username,
                         @Parameter(description = "密码") @RequestParam("password")String password) {
@@ -37,18 +40,21 @@ public class UserController {
     }
 
     @PostMapping("info")
+    @OperateLog("获取用户信息")
     @Operation(summary = "获取用户信息")
     public Result info() {
         return userService.info();
     }
 
     @PostMapping("logout")
+    @OperateLog("用户登出")
     @Operation(summary = "用户登出")
     public Result logout() {
         return userService.logout();
     }
 
     @PostMapping("update")
+    @OperateLog("修改密码")
     @Operation(summary = "修改密码")
     public Result update(@Parameter(description = "旧密码") @RequestParam("oldPassword")String oldPassword,
                          @Parameter(description = "新密码") @RequestParam("newPassword")String newPassword) {

@@ -23,4 +23,9 @@
             </if>
         </where>
     </select>
+
+    <insert id="insert">
+        insert into sys_log (user_id, operation, method, params, ip, create_time)
+        values (#{log.userId}, #{log.operation}, #{log.method}, #{log.params}, #{log.ip}, #{log.createTime})
+    </insert>
 </mapper>

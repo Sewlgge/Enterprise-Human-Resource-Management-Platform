@@ -20,6 +20,12 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!--AOP依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <!--mybatis依赖-->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
@@ -123,6 +129,7 @@
                     <source>21</source>
                     <target>21</target>
                     <encoding>UTF-8</encoding>
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
             <plugin>

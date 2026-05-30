@@ -1,5 +1,6 @@
 package com.company.management.controller;
 
+import com.company.management.annotation.OperateLog;
 import com.company.management.dto.LogPageDTO;
 import com.company.management.entity.Log;
 import com.company.management.entity.PageBean;
@@ -22,6 +23,7 @@ public class LogContoller {
     private LogService logService;
 
     @GetMapping("/page")
+    @OperateLog("分页查询日志")
     @Operation(summary = "分页查询日志")
     public Result<PageBean<Log>> page(LogPageDTO logPageDTO) {
         return logService.page(logPageDTO);

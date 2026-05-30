@@ -1,5 +1,6 @@
 package com.company.management.controller;
 
+import com.company.management.annotation.OperateLog;
 import com.company.management.dto.NoticePageDTO;
 import com.company.management.entity.Notice;
 import com.company.management.entity.PageBean;
@@ -22,24 +23,28 @@ public class NoticeController {
     private NoticeService noticeService;
 
     @GetMapping("/page")
+    @OperateLog("分页查询公告")
     @Operation(summary = "分页查询公告")
     public Result<PageBean<Notice>> page(NoticePageDTO noticePageDTO) {
         return noticeService.page(noticePageDTO);
     }
 
     @GetMapping("/{id}")
+    @OperateLog("公告详情")
     @Operation(summary = "公告详情")
     public Result<Notice> detail(@PathVariable("id") Integer id) {
         return noticeService.detail(id);
     }
 
     @PostMapping("/publish")
+    @OperateLog("发布公告")
     @Operation(summary = "发布公告")
     public Result publish(@RequestBody Notice notice) {
         return noticeService.publish(notice);
     }
 
     @DeleteMapping("/{id}")
+    @OperateLog("删除公告")
     @Operation(summary = "删除公告")
     public Result delete(@Schema(description = "公告id") @PathVariable("id") Integer id) {
         return noticeService.delete(id);
