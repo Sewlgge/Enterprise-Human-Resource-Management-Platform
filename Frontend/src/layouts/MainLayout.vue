@@ -50,8 +50,13 @@ async function handleLogout() {
       <el-header class="header">
         <span class="page-title">{{ route.meta.title || '企业人事管理' }}</span>
         <div class="user-area">
-          <span>{{ auth.user?.username }}</span>
-          <el-tag size="small" :type="auth.isAdmin ? 'danger' : 'info'" style="margin: 0 12px">
+          <div class="user-profile" @click="router.push('/profile')">
+            <el-avatar :size="36" :src="auth.user?.avatar">
+              {{ auth.user?.username?.charAt(0)?.toUpperCase() }}
+            </el-avatar>
+            <span class="username">{{ auth.user?.username }}</span>
+          </div>
+          <el-tag size="small" :type="auth.isAdmin ? 'danger' : undefined" :class="auth.isAdmin ? '' : 'tag-employee'">
             {{ auth.isAdmin ? '管理员' : '员工' }}
           </el-tag>
           <el-button link type="primary" @click="handleLogout">退出登录</el-button>
@@ -70,8 +75,8 @@ async function handleLogout() {
 }
 
 .aside {
-  background: #001529;
-  color: #fff;
+  background: linear-gradient(180deg, var(--hr-sidebar-from) 0%, var(--hr-sidebar-to) 100%);
+  color: #ecfdf5;
 }
 
 .logo {
@@ -80,50 +85,77 @@ async function handleLogout() {
   text-align: center;
   font-size: 16px;
   font-weight: 600;
-  color: #fff;
+  color: #ecfdf5;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .menu {
   border-right: none;
-  background: #001529;
+  background: transparent;
 }
 
 .menu :deep(.el-menu-item) {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(236, 253, 245, 0.75);
 }
 
 .menu :deep(.el-menu-item.is-active) {
-  background: #1890ff !important;
+  background: var(--hr-primary) !important;
   color: #fff;
 }
 
 .menu :deep(.el-menu-item:hover) {
   background: rgba(255, 255, 255, 0.08);
+  color: #ecfdf5;
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fff;
-  border-bottom: 1px solid #eee;
+  background: var(--hr-surface);
+  border-bottom: 1px solid var(--hr-border);
   height: 60px;
 }
 
 .page-title {
   font-size: 18px;
   font-weight: 500;
+  color: var(--hr-text);
 }
 
 .user-area {
   display: flex;
   align-items: center;
-  color: #666;
+  color: var(--hr-text-secondary);
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.user-profile:hover {
+  background: #f0fdfa;
+}
+
+.username {
+  font-weight: 500;
+  color: var(--hr-text);
+}
+
+.tag-employee {
+  --el-tag-bg-color: #e6f4f2;
+  --el-tag-border-color: #b3ddd7;
+  --el-tag-text-color: var(--hr-primary);
 }
 
 .main {
-  background: #f5f7fa;
+  background: var(--hr-bg);
   min-height: calc(100vh - 60px);
 }
 </style>

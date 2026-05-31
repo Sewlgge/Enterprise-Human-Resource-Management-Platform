@@ -63,19 +63,17 @@
     <select id="page" resultType="com.company.management.vo.AttendanceVO">
         select * from attendance
         <where>
+            <if test="dto.attendanceDate != null">
+                and attendance_date = #{dto.attendanceDate}
+            </if>
             <if test="dto.employeeId != null">
                 and employee_id = #{dto.employeeId}
             </if>
             <if test="dto.status != null">
                 and status = #{dto.status}
             </if>
-            <if test="dto.startTime != null">
-                and create_time >= #{dto.startTime}
-            </if>
-            <if test="dto.endTime != null">
-                and create_time &lt; #{dto.endTime}
-            </if>
         </where>
+        order by employee_id asc
     </select>
     <!-- 更新前一天的打卡状态：sign_in_time为空 → 缺卡(3) -->
     <update id="updatePreviousDayStatus">
@@ -98,7 +96,7 @@
                 status = #{status},
             </if>
         </set>
-        where employee_id = #{employeeId}
+        where id = #{id}
     </update>
 
 </mapper>

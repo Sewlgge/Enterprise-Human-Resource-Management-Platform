@@ -127,7 +127,6 @@ router.beforeEach(async (to) => {
   const auth = useAuthStore()
 
   if (to.meta.public) {
-    if (auth.isLoggedIn) return '/'
     return true
   }
 
@@ -137,7 +136,7 @@ router.beforeEach(async (to) => {
     try {
       await auth.fetchUser()
     } catch {
-      auth.logout()
+      auth.clearSession()
       return '/login'
     }
   }

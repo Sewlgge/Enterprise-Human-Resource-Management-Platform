@@ -55,29 +55,78 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
+    public Result<Notice> myDraft() {
+        Integer userId = currentAdminUserId();
+        if (userId == null) {
+            return Result.error("权限不足");
+        }
+        Notice draft = noticeMapper.getLatestDraftByPublisherId(userId);
+        return Result.success(draft);
+    }
+
+    @Override
     @Transactional
     public Result publish(Notice notice) {
-        Map<String, Object> map = ThreadLocalUtil.get();
-        Integer userId = (Integer) map.get("id");
-        User user = userMapper.findByUserId(userId);
-        if (user.getRole() != 0) {
+        Integer userId = currentAdminUserId();
+        if (userId == null) {
             log.info("权限不足");
             return Result.error("权限不足");
         }
         notice.setPublisherId(userId);
+
+        if (notice.getStatus() == null) {
+            return Result.error("公告状态不能为空");
+        }
+        if (notice.getStatus() != 0 && notice.getStatus() != 1) {
+            return Result.error("公告状态无效");
+        }
+
+        if (notice.getId() != null) {
+            Notice existing = noticeMapper.getById(notice.getId());
+            if (existing == null || !userId.equals(existing.getPublisherId())) {
+                return Result.error("公告不存在或无权操作");
+            }
+            int rows = noticeMapper.update(notice);
+            if (rows != 1) {
+                return Result.error("保存失败");
+            }
+            return Result.success(notice.getStatus() != null && notice.getStatus() == 0 ? "草稿已保存" : "发布成功");
+        }
+
+        Notice draft = noticeMapper.getLatestDraftByPublisherId(userId);
+        if (draft != null) {
+            notice.setId(draft.getId());
+            int rows = noticeMapper.update(notice);
+            if (rows != 1) {
+                return Result.error("保存失败");
+            }
+            return Result.success(notice.getStatus() != null && notice.getStatus() == 0 ? "草稿已保存" : "发布成功");
+        }
+
         int rows = noticeMapper.add(notice);
         if (rows != 1) {
-            return Result.error("发布失败");
+            return Result.error("保存失败");
         }
-        return Result.success("发布成功");
+        return Result.success(notice.getStatus() != null && notice.getStatus() == 0 ? "草稿已保存" : "发布成功");
+    }
+
+    private Integer currentAdminUserId() {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        if (map == null) {
+            return null;
+        }
+        Integer userId = (Integer) map.get("id");
+        User user = userMapper.findByUserId(userId);
+        if (user == null || user.getRole() != 0) {
+            return null;
+        }
+        return userId;
     }
 
     @Override
     public Result delete(Integer id) {
-        Map<String, Object> map = ThreadLocalUtil.get();
-        Integer userId = (Integer) map.get("id");
-        User user = userMapper.findByUserId(userId);
-        if (user.getRole() != 0) {
+        Integer userId = currentAdminUserId();
+        if (userId == null) {
             log.info("权限不足");
             return Result.error("权限不足");
         }

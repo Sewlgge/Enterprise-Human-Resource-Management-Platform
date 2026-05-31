@@ -92,7 +92,7 @@ INSERT INTO `dept` VALUES (7, '调研部', '做市场调研的', '2026-05-26 17:
 DROP TABLE IF EXISTS `employee`;
 CREATE TABLE `employee`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '员工ID',
-  `user_id` bigint NOT NULL COMMENT '关联用户ID',
+  `user_id` bigint NULL DEFAULT NULL COMMENT '关联用户ID（未绑定账号时为 NULL）',
   `dept_id` bigint NOT NULL COMMENT '部门ID',
   `position_id` bigint NOT NULL COMMENT '职位ID',
   `real_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '真实姓名',

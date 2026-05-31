@@ -1,7 +1,9 @@
 package com.company.management.mapper;
 
 import com.company.management.entity.User;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -22,11 +24,10 @@ public interface UserMapper {
 
     /**
      * 添加用户
-     * @param username
-     * @param password
      */
-    @Select("insert into sys_user(username,password) values(#{username},#{password})")
-    void insert(@Param("username") String username, @Param("password") String password);
+    @Insert("insert into sys_user(username, password) values(#{username}, #{password})")
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+    int insertUser(User user);
 
     /**
      * 根据用户ID查询用户

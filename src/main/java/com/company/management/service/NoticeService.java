@@ -18,7 +18,12 @@ public interface NoticeService {
     Result<Notice> detail(Integer id);
 
     /**
-     * 发布公告
+     * 获取当前用户草稿
+     */
+    Result<Notice> myDraft();
+
+    /**
+     * 发布或保存公告
      */
     Result publish(Notice notice);
 

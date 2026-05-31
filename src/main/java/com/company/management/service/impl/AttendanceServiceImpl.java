@@ -156,6 +156,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public Result<PageBean<AttendanceVO>> page(AttendancePageDTO attendancePageDTO) {
+        if (attendancePageDTO.getAttendanceDate() == null) {
+            attendancePageDTO.setAttendanceDate(LocalDate.now());
+        }
         PageBean<AttendanceVO> pageBean = new PageBean<>();
         PageHelper.startPage(attendancePageDTO.getPage(), attendancePageDTO.getSize());
         List<AttendanceVO> attendanceList = attendanceMapper.page(attendancePageDTO);

@@ -26,6 +26,11 @@ export const NOTICE_STATUS = {
   1: '已发布',
 }
 
+/** 公告草稿 status 固定为 0 */
+export function isNoticeDraft(status) {
+  return Number(status) === 0
+}
+
 export const LEAVE_TYPES = ['事假', '病假', '年假', '婚假', '产假', '调休']
 
 export function attendanceTagType(status) {

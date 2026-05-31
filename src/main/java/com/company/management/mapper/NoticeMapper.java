@@ -33,4 +33,15 @@ public interface NoticeMapper {
      */
     @Delete("delete from notice where id = #{id}")
     int delete(Integer id);
+
+    /**
+     * 查询当前用户最新草稿
+     */
+    @Select("select * from notice where publisher_id = #{publisherId} and status = 0 order by update_time desc, create_time desc limit 1")
+    Notice getLatestDraftByPublisherId(@Param("publisherId") Integer publisherId);
+
+    /**
+     * 更新公告
+     */
+    int update(@Param("dto") Notice notice);
 }

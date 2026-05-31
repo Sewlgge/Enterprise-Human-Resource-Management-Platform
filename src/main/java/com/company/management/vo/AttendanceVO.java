@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -17,6 +18,9 @@ public class AttendanceVO implements Serializable {
 
     @Schema(description = "员工姓名")
     private String employeeName;
+
+    @Schema(description = "考勤日期")
+    private LocalDate attendanceDate;
 
     @Schema(description = "签到时间")
     private LocalDateTime signInTime;

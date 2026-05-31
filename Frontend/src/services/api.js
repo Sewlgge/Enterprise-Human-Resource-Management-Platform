@@ -62,8 +62,10 @@ async function request(path, options = {}) {
   const res = await fetch(url, { method, headers, body })
 
   if (res.status === 401) {
-    onUnauthorized()
-    throw new Error('登录已过期，请重新登录')
+    if (!skipAuth) {
+      onUnauthorized()
+    }
+    throw new Error(skipAuth ? '请求失败，请稍后重试' : '登录已过期，请重新登录')
   }
 
   if (raw) {
@@ -89,8 +91,12 @@ async function request(path, options = {}) {
 }
 
 export async function uploadAvatar(file) {
+  const rawFile = file?.raw ?? file
+  if (!rawFile) {
+    throw new Error('请选择要上传的图片')
+  }
   const formData = new FormData()
-  formData.append('file', file)
+  formData.append('file', rawFile)
   const token = getToken()
   const res = await fetch(`${BASE}/employee/upload/avatar`, {
     method: 'POST',
@@ -110,8 +116,14 @@ export async function uploadAvatar(file) {
 
 export const api = {
   // 用户
-  register(username, password) {
-    return request('/user/register', { method: 'POST', form: { username, password }, skipAuth: true })
+  register(data) {
+    return request('/user/register', { method: 'POST', json: data, skipAuth: true })
+  },
+  deptListPublic() {
+    return request('/user/register/depts', { skipAuth: true })
+  },
+  positionListPublic(params) {
+    return request('/user/register/positions', { params, skipAuth: true })
   },
   login(username, password) {
     return request('/user/login', { method: 'POST', form: { username, password }, skipAuth: true })
@@ -228,6 +240,9 @@ export const api = {
   },
   noticeDetail(id) {
     return request(`/notice/${id}`)
+  },
+  noticeDraft() {
+    return request('/notice/draft')
   },
   publishNotice(json) {
     return request('/notice/publish', { method: 'POST', json })

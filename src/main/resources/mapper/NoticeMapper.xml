@@ -20,10 +20,29 @@
             <if test="dto.publisherId != null">
                 and publisher_id = #{dto.publisherId}
             </if>
-            and status = 1
+            <choose>
+                <when test="dto.status != null and dto.status == -1">
+                </when>
+                <when test="dto.status != null">
+                    and status = #{dto.status}
+                </when>
+                <otherwise>
+                    and status = 1
+                </otherwise>
+            </choose>
         </where>
         order by create_time desc
     </select>
+
+    <update id="update">
+        update notice
+        set title = #{dto.title},
+            content = #{dto.content},
+            status = #{dto.status},
+            update_time = now()
+        where id = #{dto.id}
+          and publisher_id = #{dto.publisherId}
+    </update>
 
     <insert id="add">
         insert into

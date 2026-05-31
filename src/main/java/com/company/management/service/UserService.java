@@ -1,5 +1,6 @@
 package com.company.management.service;
 
+import com.company.management.dto.RegisterDTO;
 import com.company.management.entity.Result;
 
 public interface UserService {
@@ -11,7 +12,7 @@ public interface UserService {
      * @param password
      * @return
      */
-    Result register(String username, String password);
+    Result register(RegisterDTO registerDTO);
 
     /**
      * 登录

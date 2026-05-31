@@ -29,4 +29,7 @@ public class NoticePageDTO {
     @Schema(description = "发布人")
     private Integer publisherId;
 
+    @Schema(description = "状态：0-草稿，1-已发布，-1-全部（管理员）")
+    private Integer status;
+
 }

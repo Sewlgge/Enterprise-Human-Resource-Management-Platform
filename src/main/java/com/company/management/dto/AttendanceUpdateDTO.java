@@ -12,6 +12,10 @@ import java.time.LocalDateTime;
 @Data
 public class AttendanceUpdateDTO implements Serializable {
 
+    @Schema(description = "考勤ID")
+    @NotNull(message = "考勤ID不能为空")
+    private Integer id;
+
     @Schema(description = "员工ID")
     @NotNull(message = "员工ID不能为空")
     private Integer employeeId;

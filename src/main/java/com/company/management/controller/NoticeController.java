@@ -29,6 +29,12 @@ public class NoticeController {
         return noticeService.page(noticePageDTO);
     }
 
+    @GetMapping("/draft")
+    @Operation(summary = "获取当前用户草稿")
+    public Result<Notice> myDraft() {
+        return noticeService.myDraft();
+    }
+
     @GetMapping("/{id}")
     @OperateLog("公告详情")
     @Operation(summary = "公告详情")

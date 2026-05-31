@@ -1,7 +1,14 @@
 package com.company.management.service.impl;
 
+import com.company.management.dto.RegisterDTO;
 import com.company.management.entity.Result;
 import com.company.management.entity.User;
+import com.company.management.entity.Employee;
+import com.company.management.entity.Dept;
+import com.company.management.entity.Position;
+import com.company.management.mapper.EmployeeMapper;
+import com.company.management.mapper.DeptMapper;
+import com.company.management.mapper.PositionMapper;
 import com.company.management.mapper.UserMapper;
 import com.company.management.service.UserService;
 import com.company.management.utils.JwtUtil;
@@ -25,6 +32,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
     @Autowired
+    private EmployeeMapper employeeMapper;
+    @Autowired
+    private DeptMapper deptMapper;
+    @Autowired
+    private PositionMapper positionMapper;
+    @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
     /**
@@ -36,9 +49,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional
-    public Result register(String username, String password) {
-        username = username.trim();
-        password = password.trim();
+    public Result register(RegisterDTO registerDTO) {
+        String username = registerDTO.getUsername().trim();
+        String password = registerDTO.getPassword().trim();
         Result validate = validate(username, password);
         if (validate != null) {
             return validate;
@@ -48,10 +61,96 @@ public class UserServiceImpl implements UserService {
             log.info("用户{}已存在", username);
             return Result.error("用户已存在");
         }
+
+        Result employeeValidate = validateRegisterEmployee(registerDTO);
+        if (employeeValidate != null) {
+            return employeeValidate;
+        }
+
+        Result preCheck = preCheckNewEmployee(registerDTO);
+        if (preCheck != null) {
+            return preCheck;
+        }
+
         password = Md5Util.getMD5String(password);
-        userMapper.insert(username, password);
+        User newUser = new User();
+        newUser.setUsername(username);
+        newUser.setPassword(password);
+        userMapper.insertUser(newUser);
+        if (newUser.getId() == null) {
+            throw new IllegalStateException("注册失败，请稍后重试");
+        }
+
+        createEmployeeForUser(registerDTO, newUser.getId());
+
         log.info("用户{}注册成功", username);
         return Result.success("注册成功");
+    }
+
+    private Result validateRegisterEmployee(RegisterDTO dto) {
+        if (dto.getRealName() == null || dto.getRealName().isBlank()) {
+            return Result.error("请输入真实姓名");
+        }
+        if (dto.getGender() == null) {
+            return Result.error("请选择性别");
+        }
+        if (dto.getPhone() == null || dto.getPhone().isBlank()) {
+            return Result.error("请输入手机号");
+        }
+        if (!dto.getPhone().matches("^1[3-9]\\d{9}$")) {
+            return Result.error("手机号格式不正确");
+        }
+        if (dto.getEmail() == null || dto.getEmail().isBlank()) {
+            return Result.error("请输入邮箱");
+        }
+        if (dto.getDeptId() == null) {
+            return Result.error("请选择部门");
+        }
+        if (dto.getPositionId() == null) {
+            return Result.error("请选择职位");
+        }
+        if (dto.getAge() == null) {
+            return Result.error("请输入年龄");
+        }
+        return null;
+    }
+
+    private Result preCheckNewEmployee(RegisterDTO dto) {
+        Dept dept = deptMapper.getById(dto.getDeptId());
+        if (dept == null || dept.getIsDeleted() == 1) {
+            return Result.error("部门不存在或已删除");
+        }
+        Position position = positionMapper.getById(dto.getPositionId());
+        if (position == null || position.getIsDeleted() == 1) {
+            return Result.error("职位不存在或已删除");
+        }
+        if (!position.getDeptId().equals(dto.getDeptId())) {
+            return Result.error("所选职位不属于该部门");
+        }
+
+        Employee existing = employeeMapper.getByNameIncludeDeleted(dto.getRealName().trim());
+        if (existing != null && existing.getIsDeleted() == 0) {
+            return Result.error("该姓名员工档案已存在");
+        }
+        return null;
+    }
+
+    private void createEmployeeForUser(RegisterDTO dto, Integer userId) {
+        Employee employee = new Employee();
+        employee.setRealName(dto.getRealName().trim());
+        employee.setGender(dto.getGender());
+        employee.setPhone(dto.getPhone().trim());
+        employee.setEmail(dto.getEmail().trim());
+        employee.setDeptId(dto.getDeptId());
+        employee.setPositionId(dto.getPositionId());
+        employee.setAge(dto.getAge());
+        employee.setAddress(dto.getAddress());
+        employee.setUserId(userId);
+
+        Boolean added = employeeMapper.add(employee);
+        if (added == null || !added) {
+            throw new IllegalStateException("创建员工档案失败");
+        }
     }
 
     /**
@@ -117,6 +216,10 @@ public class UserServiceImpl implements UserService {
         String username = (String)map.get("username");
         User user = findByUsername(username);
         user.setPassword(null);
+        Employee employee = employeeMapper.getByUserId(user.getId());
+        if (employee != null) {
+            user.setAvatar(employee.getAvatar());
+        }
         log.info("用户{}查询成功", user);
         return Result.success(user);
     }
@@ -204,8 +307,16 @@ public class UserServiceImpl implements UserService {
         }
         user.setPassword(Md5Util.getMD5String(newPassword.trim()));
         userMapper.update(userId, user.getPassword());
+
+        String token = (String) map.get("token");
+        if (token != null) {
+            stringRedisTemplate.delete(token);
+        }
+        String redisKey = "login:token:" + userId;
+        stringRedisTemplate.delete(redisKey);
+
         log.info("用户{}修改密码成功", user.getId());
-        return Result.success("修改密码成功");
+        return Result.success("修改密码成功，请重新登录");
     }
 
     private User findByUserId(Integer userId) {

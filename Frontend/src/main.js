@@ -17,8 +17,10 @@ app.use(ElementPlus)
 
 setUnauthorizedHandler(() => {
   const auth = useAuthStore()
-  auth.logout()
-  router.push('/login')
+  auth.clearSession()
+  if (!router.currentRoute.value.meta.public) {
+    router.push('/login')
+  }
 })
 
 app.mount('#app')

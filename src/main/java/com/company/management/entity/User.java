@@ -45,4 +45,9 @@ public class User implements Serializable {
      * 是否删除
      */
     private Integer isDeleted;
+
+    /**
+     * 头像（来自关联员工，非 user 表字段）
+     */
+    private String avatar;
 }

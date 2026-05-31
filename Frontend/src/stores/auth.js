@@ -17,8 +17,8 @@ export const useAuthStore = defineStore('auth', () => {
     await fetchUser()
   }
 
-  async function register(username, password) {
-    await api.register(username, password)
+  async function register(data) {
+    await api.register(data)
   }
 
   async function fetchUser() {
@@ -26,13 +26,21 @@ export const useAuthStore = defineStore('auth', () => {
     return user.value
   }
 
+  function clearSession() {
+    token.value = null
+    user.value = null
+    clearToken()
+  }
+
   async function logout() {
     try {
-      await api.logout()
+      if (token.value || getToken()) {
+        await api.logout()
+      }
+    } catch {
+      /* token 可能已失效，本地清会话即可 */
     } finally {
-      token.value = null
-      user.value = null
-      clearToken()
+      clearSession()
     }
   }
 
@@ -40,5 +48,11 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = getToken()
   }
 
-  return { token, user, isLoggedIn, isAdmin, login, register, fetchUser, logout, initFromStorage }
+  function setAvatar(avatar) {
+    if (user.value) {
+      user.value = { ...user.value, avatar }
+    }
+  }
+
+  return { token, user, isLoggedIn, isAdmin, login, register, fetchUser, logout, clearSession, initFromStorage, setAvatar }
 })

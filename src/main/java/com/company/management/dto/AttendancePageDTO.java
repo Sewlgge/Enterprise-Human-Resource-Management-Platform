@@ -6,6 +6,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -23,6 +24,10 @@ public class AttendancePageDTO implements Serializable {
 
     @Schema(description = "考勤状态")
     private Integer status;
+
+    @Schema(description = "考勤日期，默认当天")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate attendanceDate;
 
     @Schema(description = "开始时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
