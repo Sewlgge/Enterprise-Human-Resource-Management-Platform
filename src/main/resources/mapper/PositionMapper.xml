@@ -10,7 +10,7 @@
         select * from position
         <where>
             <if test="dto.name != null and dto.name != ''">
-                name like concat('%',#{dto.name},'%')
+                real_name like concat('%',#{dto.name},'%')
             </if>
             <if test="dto.deptId != null">
                 and dept_id = #{dto.deptId}
