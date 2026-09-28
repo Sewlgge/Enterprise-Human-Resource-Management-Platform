@@ -7,7 +7,6 @@
 | 后端 | Spring Boot 3 + MyBatis，默认端口 `8084` |
 | 前端 | Vue 3 + Element Plus + Vite，开发端口 `5173` |
 | 数据库 | MySQL 8，库名 `emp_sys` |
-
 ---
 
 ## 第一章 系统分析
