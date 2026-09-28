@@ -4,6 +4,7 @@
 
 本文档用于 Devslight 后端接口开发，适配 Spring Boot + Spring Security + MyBatis + MySQL。
 
+
 ### 1.1 基础约定
 
 | 项目 | 约定 |
